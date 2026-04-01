@@ -1,0 +1,279 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Plugin Manifest Schema",
+  "description": "Validation schema for plugin manifest.json files",
+  "type": "object",
+  "required": ["id", "name", "version", "entrypoint"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the plugin (lowercase, hyphens allowed)",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,62}[a-z0-9]$",
+      "minLength": 3,
+      "maxLength": 64
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable name",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "version": {
+      "type": "string",
+      "description": "Semantic version (MAJOR.MINOR.PATCH)",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$"
+    },
+    "description": {
+      "type": "string",
+      "description": "Short description of plugin functionality",
+      "maxLength": 512
+    },
+    "long_description": {
+      "type": "string",
+      "description": "Detailed description of plugin functionality and features",
+      "maxLength": 5000
+    },
+    "features": {
+      "type": "array",
+      "description": "List of key features provided by the plugin",
+      "items": {
+        "type": "string",
+        "maxLength": 200
+      },
+      "maxItems": 10
+    },
+    "use_cases": {
+      "type": "array",
+      "description": "Common use cases for the plugin",
+      "items": {
+        "type": "string",
+        "maxLength": 200
+      },
+      "maxItems": 10
+    },
+    "screenshots": {
+      "type": "array",
+      "description": "Paths to screenshot images",
+      "items": {
+        "type": "string",
+        "pattern": "^/.*\\.(png|jpg|jpeg|gif)$"
+      }
+    },
+    "demo_url": {
+      "type": "string",
+      "description": "URL to live demo (optional)",
+      "format": "uri",
+      "maxLength": 512
+    },
+    "documentation_url": {
+      "type": "string",
+      "description": "URL to plugin documentation",
+      "format": "uri",
+      "maxLength": 512
+    },
+    "changelog_url": {
+      "type": "string",
+      "description": "URL to changelog",
+      "format": "uri",
+      "maxLength": 512
+    },
+    "author": {
+      "type": "object",
+      "description": "Author information",
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "maxLength": 128
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "maxLength": 512
+        }
+      },
+      "additionalProperties": false
+    },
+    "ai_configuration": {
+      "type": "object",
+      "description": "AI model configuration for different environments",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether AI features are enabled"
+        },
+        "environments": {
+          "type": "object",
+          "properties": {
+            "development": {
+              "$ref": "#/$defs/ai_environment_config"
+            },
+            "staging": {
+              "$ref": "#/$defs/ai_environment_config"
+            },
+            "production": {
+              "$ref": "#/$defs/ai_environment_config"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "resources": {
+      "type": "object",
+      "description": "Resource allocation tier and limits",
+      "properties": {
+        "tier": {
+          "type": "string",
+          "enum": ["sandbox", "bronze", "silver", "gold", "platinum"],
+          "description": "Resource tier determines default limits"
+        },
+        "cpu_limit": {
+          "type": "string",
+          "pattern": "^[0-9]+m?$",
+          "description": "CPU limit (e.g., '500m' or '1')"
+        },
+        "memory_limit": {
+          "type": "string",
+          "pattern": "^[0-9]+(Mi|Gi)?$",
+          "description": "Memory limit (e.g., '512Mi', '1Gi')"
+        },
+        "cpu_request": {
+          "type": "string",
+          "pattern": "^[0-9]+m?$",
+          "description": "CPU request"
+        },
+        "memory_request": {
+          "type": "string",
+          "pattern": "^[0-9]+(Mi|Gi)?$",
+          "description": "Memory request"
+        }
+      },
+      "additionalProperties": false
+    },
+    "dependencies": {
+      "type": "array",
+      "description": "List of required plugin IDs",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "permissions": {
+      "type": "array",
+      "description": "List of required permissions",
+      "items": {
+        "type": "string",
+        "pattern": "^(read|write|execute):[a-z0-9_]+$"
+      },
+      "uniqueItems": true
+    },
+    "entrypoint": {
+      "type": "string",
+      "description": "Path to main entry point file",
+      "pattern": "^src/.*\\.(py|js|ts)$"
+    },
+    "healthcheck_path": {
+      "type": "string",
+      "description": "HTTP path for health checks",
+      "default": "/health",
+      "pattern": "^/.*$"
+    },
+    "lifecycle": {
+      "type": "object",
+      "description": "Lifecycle timeout configurations",
+      "properties": {
+        "init_timeout": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 30,
+          "default": 5,
+          "description": "Initialization timeout in seconds"
+        },
+        "shutdown_timeout": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 60,
+          "default": 10,
+          "description": "Shutdown timeout in seconds"
+        },
+        "drain_timeout": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 120,
+          "default": 30,
+          "description": "Request drain timeout in seconds"
+        }
+      },
+      "additionalProperties": false
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata",
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "category": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "ai_environment_config": {
+      "type": "object",
+      "properties": {
+        "models": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "maxItems": 5
+        },
+        "fallback_models": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 3
+        },
+        "max_tokens": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 128000
+        },
+        "rate_limit": {
+          "type": "string",
+          "pattern": "^[0-9]+/(second|minute|hour|day)$"
+        },
+        "budget_daily_usd": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "cost_optimization": {
+          "type": "boolean"
+        }
+      },
+      "required": ["models", "max_tokens"],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

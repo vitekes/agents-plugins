@@ -1,0 +1,74 @@
+{
+  "id": "example-plugin",
+  "name": "Example Plugin",
+  "version": "1.0.0",
+  "description": "A sample plugin demonstrating the template structure",
+  "long_description": "This plugin serves as a comprehensive template for creating new plugins in the Idea Catalog system. It includes all necessary components: manifest, lifecycle implementation, tests, validation scripts, and security configurations. Use this as a starting point for your own plugins.",
+  "features": [
+    "Standard plugin lifecycle implementation",
+    "Health check endpoints",
+    "Graceful shutdown handling",
+    "Resource quota enforcement",
+    "Security best practices"
+  ],
+  "use_cases": [
+    "Template for new plugin development",
+    "Learning resource for plugin architecture",
+    "Testing plugin orchestration system"
+  ],
+  "screenshots": [],
+  "demo_url": "",
+  "documentation_url": "/plugins/example-plugin/docs",
+  "changelog_url": "/plugins/example-plugin/CHANGELOG.md",
+  "author": {
+    "name": "Platform Team",
+    "email": "platform@example.com",
+    "url": "https://platform.example.com"
+  },
+  "ai_configuration": {
+    "enabled": false,
+    "environments": {
+      "development": {
+        "models": ["gpt-4o", "claude-3-sonnet"],
+        "max_tokens": 8192,
+        "rate_limit": "100/hour",
+        "budget_daily_usd": 50
+      },
+      "staging": {
+        "models": ["gpt-4o-mini", "claude-3-haiku"],
+        "max_tokens": 4096,
+        "rate_limit": "500/hour",
+        "budget_daily_usd": 20
+      },
+      "production": {
+        "models": ["gpt-4o-mini", "claude-3-haiku"],
+        "fallback_models": ["phi-3-mini"],
+        "max_tokens": 2048,
+        "rate_limit": "10000/hour",
+        "budget_daily_usd": 10,
+        "cost_optimization": true
+      }
+    }
+  },
+  "resources": {
+    "tier": "bronze",
+    "cpu_limit": "500m",
+    "memory_limit": "512Mi",
+    "cpu_request": "100m",
+    "memory_request": "128Mi"
+  },
+  "dependencies": [],
+  "permissions": ["read:public_data"],
+  "entrypoint": "src/main.py",
+  "healthcheck_path": "/health",
+  "lifecycle": {
+    "init_timeout": 5,
+    "shutdown_timeout": 10,
+    "drain_timeout": 30
+  },
+  "metadata": {
+    "created_at": "2024-01-01T00:00:00Z",
+    "tags": ["example", "template"],
+    "category": "utility"
+  }
+}
